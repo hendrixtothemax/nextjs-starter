@@ -4,20 +4,20 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { createSupabaseClient } from '@/lib/supabase/client'
 
-export default function Login() {
+export default function SignUp() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
 
     try {
       const supabase = createSupabaseClient()
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
       })
@@ -38,7 +38,7 @@ export default function Login() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 md:px-0">
       <div className="bg-white rounded-lg shadow-md p-8 w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">Login</h1>
+        <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">Sign Up</h1>
 
         {error && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
@@ -46,7 +46,7 @@ export default function Login() {
           </div>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleSignUp} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email
@@ -80,14 +80,14 @@ export default function Login() {
             disabled={loading}
             className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-2 rounded-lg transition"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Signing up...' : 'Sign Up'}
           </button>
         </form>
 
         <div className="mt-6 text-center text-sm text-gray-600">
-          Don't have an account?{' '}
-          <Link href="/signup" className="text-blue-600 hover:underline font-medium">
-            Sign Up
+          Already have an account?{' '}
+          <Link href="/login" className="text-blue-600 hover:underline font-medium">
+            Sign In
           </Link>
         </div>
       </div>
