@@ -33,5 +33,5 @@ export const config = {
     '/blog',
     '/contact',
   ],
-  ignoredRoutes: ['/_next/static', '/_external', '/api/auth/callback'],
+  ignoredRoutes: ['/_next/static', '/_external', '/api/auth/callback', '/login', '/signup'],
 }
