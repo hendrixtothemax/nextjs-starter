@@ -68,7 +68,7 @@ export default function Navbar() {
                         </div>
                         <nav className="p-4 space-y-2">
                             <Link
-                                href="#"
+                                href="/dashboard"
                                 className="block px-4 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 transition"
                                 onClick={() => setMobileMenuOpen(false)}
                             >

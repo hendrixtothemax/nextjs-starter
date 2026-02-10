@@ -88,7 +88,7 @@ export default function ProfileDropdown({
 
           <div className="py-2">
             <Link
-              href="/dashboard/profile"
+              href="/user/account"
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
               onClick={onClose}
             >
