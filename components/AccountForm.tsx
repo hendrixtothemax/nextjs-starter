@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { createSupabaseClient } from "@/lib/supabase/client"
 import { uploadProfileAvatar } from "@/lib/storage/profile_avatar_upload"
+import Image from "next/image"
 
 type Props = {
   initialFirstName: string
@@ -24,6 +25,8 @@ export default function AccountForm({
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  const publicAvatarUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${userId}.jpg`
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -94,10 +97,19 @@ export default function AccountForm({
           />
         </div>
 
-        <div className="mt-4">
+        <div className="mt-4 flex flex-col">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Avatar Upload
           </label>
+          <div className="relative w-24 h-24 mb-4">
+            <Image
+              src={`${publicAvatarUrl}?t=${Date.now()}`}
+              alt="Profile Avatar"
+              fill
+              className="rounded-xl object-cover border border-gray-200"
+              unoptimized
+            />
+          </div>
           <input
             className="block w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
             type="file"

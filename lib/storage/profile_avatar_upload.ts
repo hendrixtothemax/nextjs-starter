@@ -1,22 +1,29 @@
 import { createSupabaseClient } from "@/lib/supabase/client"
 
 export async function uploadProfileAvatar(
-  file: File,
+  file: File | null | undefined,
   userId: string
-): Promise<string> {
-  const supabase = createSupabaseClient()
-  
-  // Do not include 'avatars/' prefix here because it is defined in .from()
-  const filePath = `${userId}.jpg` 
+): Promise<string | null> {
+    // Guard clause: if no file, exit early without error
+    if (!file) {
+        return null
+    }
 
-  const { error } = await supabase.storage
-    .from("avatars")
-    .upload(filePath, file, {
-      upsert: true,
-      contentType: 'image/jpeg'
-    })
+    const supabase = createSupabaseClient()
+    
+    // Standardized naming convention for one-to-one mapping
+    const filePath = `${userId}.jpg` 
 
-  if (error) throw error
+    const { error } = await supabase.storage
+        .from("avatars")
+        .upload(filePath, file, {
+        upsert: true,
+        contentType: "image/jpeg",
+        })
 
-  return filePath
+    if (error) {
+        throw error
+    }
+
+    return filePath
 }
