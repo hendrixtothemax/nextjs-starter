@@ -7,6 +7,8 @@ import { createSupabaseClient } from '@/lib/supabase/client'
 export default function SignUp() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -17,15 +19,36 @@ export default function SignUp() {
 
     try {
       const supabase = createSupabaseClient()
-      const { error } = await supabase.auth.signUp({
+
+      // 1. Sign up the user and destructure data to get the user object
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
       })
 
-      if (error) {
-        setError(error.message)
-      } else {
-        // Redirect to home on success
+      if (signUpError) {
+        setError(signUpError.message)
+        return
+      }
+
+      const user = data.user
+
+      // 2. Use the user ID to update the corresponding profile row
+      if (user) {
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({
+            email,
+            first_name: firstName,
+            last_name: lastName,
+          })
+          .eq('id', user.id) // This targets the specific user profile
+
+        if (updateError) {
+          setError(updateError.message)
+          return
+        }
+
         window.location.href = '/'
       }
     } catch (err) {
@@ -72,6 +95,34 @@ export default function SignUp() {
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 placeholder:text-slate-400"
               placeholder="••••••••"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              First Name
+            </label>
+            <input
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 placeholder:text-slate-400"
+              placeholder="First Name"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Last Name
+            </label>
+            <input
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 placeholder:text-slate-400"
+              placeholder="Last Name"
             />
           </div>
 
