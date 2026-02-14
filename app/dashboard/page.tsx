@@ -1,12 +1,12 @@
 'use client'
 
-import Navbar from '@/components/Navbar'
+import Navbar from '@/components/navbars/Navbar'
 
 export default function Dashboard() {
     return (
         <div className="min-h-screen bg-gray-100">
             {/* Navbar */}
-            <Navbar />
+            <Navbar title="Dashboard" />
 
             {/* Page Content */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

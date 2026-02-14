@@ -2,10 +2,14 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import HamburgerMenu from './HamburgerMenu'
-import ProfileDropdown from './ProfileDropdown'
+import HamburgerMenu from '@/components/HamburgerMenu'
+import ProfileDropdown from '@/components/ProfileDropdown'
 
-export default function Navbar() {
+interface NavbarProps {
+    title?: string
+}
+
+export default function Navbar({ title = "" }: NavbarProps) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [profileMenuOpen, setProfileMenuOpen] = useState(false)
 
@@ -21,7 +25,7 @@ export default function Navbar() {
 
                     {/* Logo/Brand - Center */}
                     <div className="flex-1 text-center">
-                        <h1 className="text-xl font-bold text-blue-600">Dashboard</h1>
+                        <h1 className="text-xl font-bold text-blue-600">{title}</h1>
                     </div>
 
                     {/* Profile Dropdown - Right */}

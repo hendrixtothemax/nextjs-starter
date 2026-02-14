@@ -1,7 +1,7 @@
 
 import AccountForm from '@/components/AccountForm'
 import { createClient } from '@/lib/supabase/server'
-import Navbar from '@/components/Navbar'
+import Navbar from '@/components/navbars/Navbar'
 
 export default async function Page() {
 	const supabase = await createClient()
