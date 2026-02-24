@@ -1,5 +1,6 @@
 const { execSync } = require("child_process");
 const fs = require("fs");
+const crypto = require("crypto");
 const path = require("path");
 
 function runCommand(command, ignoreError = false) {
@@ -49,8 +50,9 @@ function setup() {
 
   const urlMatch = startOutput.match(/Project URL\s*│\s*(https?:\/\/[^\s│]+)/);
   const keyMatch = startOutput.match(/Publishable\s*│\s*([^\s│]+)/);
+  const privateKeyMatch = startOutput.match(/Secret\s*│\s*([^\s│]+)/);
 
-  if (!urlMatch || !keyMatch) {
+  if (!urlMatch || !keyMatch || !privateKeyMatch) {
     console.error("Error: Could not extract credentials.");
     process.exit(1);
   }
@@ -59,17 +61,44 @@ function setup() {
 
   const sbUrl = urlMatch[1].trim();
   const sbKey = keyMatch[1].trim();
+  const sbPrivateKey = privateKeyMatch[1].trim();
 
-  // Update .env.local logic here...
   console.log("Updating .env.local with Supabase credentials...");
   const envPath = path.join(process.cwd(), ".env.local");
   let envContent = fs.existsSync(envPath) ? fs.readFileSync(envPath, "utf8") : "";
-  const vars = { NEXT_PUBLIC_SUPABASE_URL: sbUrl, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sbKey };
+
+  // Helper to set env var if missing
+  function ensureEnvVar(key, valueGenerator) {
+    const regExp = new RegExp(`^${key}=.*`, "m");
+
+    if (!regExp.test(envContent)) {
+      const value = valueGenerator();
+      console.log(`Generating ${key}...`);
+      envContent += `\n${key}=${value}`;
+    }
+  }
+
+  // Generate 256-bit symmetric key if missing
+  ensureEnvVar("MASTER_ENCRYPTION_KEY", () => {
+    return crypto.randomBytes(32).toString("base64");
+  });
+
+  // Always update Supabase vars
+  const vars = { 
+    NEXT_PUBLIC_SUPABASE_URL: sbUrl, 
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sbKey,
+    SUPABASE_SERVICE_ROLE_KEY: sbPrivateKey
+  };
+
   Object.entries(vars).forEach(([key, value]) => {
     const regExp = new RegExp(`^${key}=.*`, "m");
-    envContent = regExp.test(envContent) ? envContent.replace(regExp, `${key}=${value}`) : `${envContent}\n${key}=${value}`;
+    envContent = regExp.test(envContent) 
+      ? envContent.replace(regExp, `${key}=${value}`) 
+      : `${envContent}\n${key}=${value}`;
   });
+
   fs.writeFileSync(envPath, envContent.trim() + "\n");
+
 
   console.log("Setup complete!");
 }
