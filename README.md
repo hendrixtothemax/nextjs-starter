@@ -166,3 +166,4 @@ To prevent double-billing and ensure migrations run before the frontend build:
 *   **Migration Mismatch**: If the remote database schema diverges, run `supabase db remote commit` to sync your local state.
 *   **Vercel Build Failure**: Ensure all `NEXT_PUBLIC_` variables are added to the GitHub Secrets as the build happens on the runner.
 *   **Port Conflicts**: If port 5432 is already in use by a local Postgres installation, modify the `config.toml` in the supabase folder to use a different port.
+*   **Local Migration Not Working**: Try `npx supabase reset`. This will remove all data from the database and rerun all the migrations to give a clean local database.
