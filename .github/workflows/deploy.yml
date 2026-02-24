@@ -8,6 +8,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Define common Supabase env at the job level
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,12 +27,13 @@ jobs:
           version: latest
 
       - name: Link Supabase Project
-        run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_ID }} --password ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: >
+          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_ID }} 
+          --password ${{ secrets.SUPABASE_DB_PASSWORD }}
 
       - name: Push Database Migrations
-        run: supabase db push --password ${{ secrets.SUPABASE_DB_PASSWORD }}
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: >
+          supabase db push --password ${{ secrets.SUPABASE_DB_PASSWORD }}
 
       # Phase 2: Vercel Deployment
       - name: Install Vercel CLI
@@ -49,6 +53,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
 
+      # Use the prebuilt flag to send the artifacts created in the previous step
       - name: Deploy Project Artifacts to Vercel
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
