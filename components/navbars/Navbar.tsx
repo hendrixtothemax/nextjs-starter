@@ -79,18 +79,11 @@ export default function Navbar({ title = "" }: NavbarProps) {
                                 Home
                             </Link>
                             <Link
-                                href="#"
+                                href="/user/account"
                                 className="block px-4 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 transition"
                                 onClick={() => setMobileMenuOpen(false)}
                             >
-                                Analytics
-                            </Link>
-                            <Link
-                                href="#"
-                                className="block px-4 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 transition"
-                                onClick={() => setMobileMenuOpen(false)}
-                            >
-                                Reports
+                                Account
                             </Link>
                         </nav>
                     </div>
