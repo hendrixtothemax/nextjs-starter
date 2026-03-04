@@ -67,22 +67,6 @@ function setup() {
   const envPath = path.join(process.cwd(), ".env.local");
   let envContent = fs.existsSync(envPath) ? fs.readFileSync(envPath, "utf8") : "";
 
-  // Helper to set env var if missing
-  function ensureEnvVar(key, valueGenerator) {
-    const regExp = new RegExp(`^${key}=.*`, "m");
-
-    if (!regExp.test(envContent)) {
-      const value = valueGenerator();
-      console.log(`Generating ${key}...`);
-      envContent += `\n${key}=${value}`;
-    }
-  }
-
-  // Generate 256-bit symmetric key if missing
-  ensureEnvVar("MASTER_ENCRYPTION_KEY", () => {
-    return crypto.randomBytes(32).toString("base64");
-  });
-
   // Always update Supabase vars
   const vars = { 
     NEXT_PUBLIC_SUPABASE_URL: sbUrl, 
